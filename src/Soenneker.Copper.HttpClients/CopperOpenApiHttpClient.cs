@@ -11,7 +11,7 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Copper.HttpClients;
 
-///<inheritdoc cref="ICopperOpenApiHttpClient"/>
+/// <inheritdoc cref="ICopperOpenApiHttpClient"/>
 public sealed class CopperOpenApiHttpClient : ICopperOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
