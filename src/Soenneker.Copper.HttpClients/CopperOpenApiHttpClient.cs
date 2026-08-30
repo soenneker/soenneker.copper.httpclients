@@ -16,8 +16,9 @@ public sealed class CopperOpenApiHttpClient : ICopperOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
     private readonly IConfiguration _config;
+    private readonly string _cacheKey = $"{nameof(CopperOpenApiHttpClient)}:{Guid.NewGuid():N}";
 
-    private const string _prodBaseUrl = "https://api.copper.com/developer_api/v1";
+    private const string _prodBaseUrl = "https://api.copper.com/developer_api/v1/";
 
     public CopperOpenApiHttpClient(IHttpClientCache httpClientCache, IConfiguration config)
     {
@@ -27,7 +28,7 @@ public sealed class CopperOpenApiHttpClient : ICopperOpenApiHttpClient
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(nameof(CopperOpenApiHttpClient), (config: _config, baseUrl: _config["Copper:ClientBaseUrl"] ?? _prodBaseUrl), static state =>
+        return _httpClientCache.Get(_cacheKey, (config: _config, baseUrl: _config["Copper:ClientBaseUrl"] ?? _prodBaseUrl), static state =>
         {
             var apiKey = state.config.GetValueStrict<string>("Copper:ApiKey");
             string authHeaderName = state.config["Copper:AuthHeaderName"] ?? "X-PW-AccessToken";
@@ -38,7 +39,7 @@ public sealed class CopperOpenApiHttpClient : ICopperOpenApiHttpClient
 
             return new HttpClientOptions
             {
-                BaseAddress = new Uri(state.baseUrl),
+                BaseAddress = new Uri(state.baseUrl.TrimEnd('/') + '/'),
                 DefaultRequestHeaders = new Dictionary<string, string>
                 {
                     {authHeaderName, authHeaderValue},
@@ -51,11 +52,11 @@ public sealed class CopperOpenApiHttpClient : ICopperOpenApiHttpClient
 
     public void Dispose()
     {
-        _httpClientCache.RemoveSync(nameof(CopperOpenApiHttpClient));
+        _httpClientCache.RemoveSync(_cacheKey);
     }
 
     public ValueTask DisposeAsync()
     {
-        return _httpClientCache.Remove(nameof(CopperOpenApiHttpClient));
+        return _httpClientCache.Remove(_cacheKey);
     }
 }

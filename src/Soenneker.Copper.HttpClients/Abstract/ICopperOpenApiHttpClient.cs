@@ -3,15 +3,16 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading;
 namespace Soenneker.Copper.HttpClients.Abstract;
+
 /// <summary>
-/// A .NET thread-safe singleton HttpClient for 
+/// Provides a cached, authenticated <see cref="HttpClient"/> for Copper's Developer API.
 /// </summary>
-public interface ICopperOpenApiHttpClient: IDisposable, IAsyncDisposable
+public interface ICopperOpenApiHttpClient : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Returns the configured HTTP client used by the Copper OpenAPI HTTP Client.
+    /// Returns the configured HTTP client owned by this wrapper.
     /// </summary>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
-    /// <returns>A task whose result is the requested HTTP client.</returns>
+    /// <returns>A task whose result is the cached HTTP client.</returns>
     ValueTask<HttpClient> Get(CancellationToken cancellationToken = default);
 }
