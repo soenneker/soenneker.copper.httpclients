@@ -30,11 +30,11 @@ public sealed class CopperOpenApiHttpClient : ICopperOpenApiHttpClient
     {
         return _httpClientCache.Get(_cacheKey, (config: _config, baseUrl: _config["Copper:ClientBaseUrl"] ?? _prodBaseUrl), static state =>
         {
-            var apiKey = state.config.GetValueStrict<string>("Copper:ApiKey");
+            var apiKey = state.config.GetStringStrict("Copper:ApiKey");
             string authHeaderName = state.config["Copper:AuthHeaderName"] ?? "X-PW-AccessToken";
             string authHeaderValueTemplate = state.config["Copper:AuthHeaderValueTemplate"] ?? "{token}";
             string authHeaderValue = authHeaderValueTemplate.Replace("{token}", apiKey, StringComparison.Ordinal);
-            string email = state.config.GetValueStrict<string>("Copper:Email");
+            string email = state.config.GetStringStrict("Copper:Email");
             string application = state.config["Copper:Application"] ?? "developer_api";
 
             return new HttpClientOptions
